@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Button, ImageBackground, TouchableOpacity,KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 export default class Start extends React.Component {
@@ -17,7 +17,8 @@ export default class Start extends React.Component {
         return(
             <ImageBackground source={require('../assets/BackgroundImage.png')} style={styles.background}>
                  <Text style={styles.title}>Chat App</Text>
-            <View style={styles.container}>
+                 
+            <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : 'padding'} style={styles.container}>
                 <TextInput
                    style={styles.namebox}
                    onChangeText={(name) => this.setState({name})}
@@ -36,7 +37,8 @@ export default class Start extends React.Component {
                 onPress={() => this.props.navigation.navigate('Chat', {name: this.state.name, color: this.state.color})}>
                 <Text style={styles.startChat}>Start Chatting</Text>
                 </TouchableOpacity>
-             </View>
+             
+             </KeyboardAvoidingView>
             </ImageBackground>
         )
     }
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
         height: '44%',
         width: '88%', 
         marginBottom: 20,
-        backgroundColor: '#FFF'
+        backgroundColor: '#FFF',
     },
     colorButton: {
         height: 35,
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         backgroundColor: '#757083',
         marginBottom: 30,
+        marginTop: 30,
         width: '88%',
         height: '20%'
     },
@@ -100,7 +103,8 @@ const styles = StyleSheet.create({
     },
     colorSelect: {
         flex: 4,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginBottom: 50
     },
     color1: {
         backgroundColor: '#090c08'
@@ -122,6 +126,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignItems: 'center',
         marginTop: 20,
-        marginBottom: 10
+        marginBottom: 20
     }
 })
