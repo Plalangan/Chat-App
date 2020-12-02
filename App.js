@@ -7,11 +7,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 
 
+const firebase = require('firebase');
+require('firebase/firestore');
 const Stack = createStackNavigator();
 
 export default function App() {
 
-
+  
 
   
 
