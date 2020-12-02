@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Button, TouchableOpacity, StyleSheet, FlatList, LogBox } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -20,6 +20,8 @@ export default class Chat extends React.Component {
             loggedInText: '',
             uid: 1
         }
+
+        
 
       const firebaseConfig = {
         apiKey: "AIzaSyBbHXvY-YPrjcO0uT8Hxrp619XZ78w8Nx4",
@@ -44,6 +46,7 @@ export default class Chat extends React.Component {
         ()=> {
           this.addMessages();
           this.saveMessages();
+          
         },
         )};
       
@@ -56,7 +59,12 @@ export default class Chat extends React.Component {
           messages.push({
             _id: data._id,
             createdAt: data.createdAt.toDate(),
-            user: data.user,
+            user: {
+              _id: data.user._id,
+              name: data.user.name,
+              avatar: data.user.avatar
+
+            },
             text: data.text,
             location: data.location || null,
             image: data.image || ''
@@ -112,15 +120,7 @@ export default class Chat extends React.Component {
 
     componentDidMount() {
         this.setState({
-          messages: [
-            
-            {
-              _id: 2,
-              text: 'This is a system message',
-              createdAt: new Date(),
-              system: true
-            }
-          ],
+          messages: [],
         });
        
 
@@ -136,9 +136,10 @@ export default class Chat extends React.Component {
           this.setState({
             uid: user.uid,
             loggedInText: 'Hello there',
+            avatar: 'https://placeimg.com/140/140/any'
           });
 
-          this.referenceMessagesUser = firebase.firestore().collection('messages').where("user.uid", "==", this.state.uid);
+          this.referenceMessagesUser = firebase.firestore().collection('messages').where("user.uid", "==", this.state.uid).orderBy('createdAt', 'desc');
           this.unsubscribeChatUser = this.referenceMessagesUser.onSnapshot(this.onCollectionUpdate);
         });
       }
@@ -171,6 +172,7 @@ export default class Chat extends React.Component {
             messages={this.state.messages}
             onSend={messages => this.onSend(messages)}
             image={this.state.image}
+            avatar={this.state.user.avatar}
             user={{
             uid: this.state.uid,
             }}
