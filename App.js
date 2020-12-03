@@ -2,13 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Alert, Button, ScrollView} from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
+import CustomActions from './components/CustomActions';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 
 
-const firebase = require('firebase');
-require('firebase/firestore');
 const Stack = createStackNavigator();
 
 export default function App() {

@@ -5,7 +5,11 @@ import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import NetInfo from '@react-native-community/netinfo';
 const firebase = require('firebase');
 require('firebase/firestore');
-
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
 
 
 
@@ -26,7 +30,7 @@ export default class Chat extends React.Component {
             isConnected: false,
         }
 
-      //LogBox.ignoreAllLogs()
+      LogBox.ignoreAllLogs()
 
       const firebaseConfig = {
         apiKey: "AIzaSyBbHXvY-YPrjcO0uT8Hxrp619XZ78w8Nx4",
@@ -128,7 +132,41 @@ export default class Chat extends React.Component {
         }
       }
 
+      getLocation = async () => {
+        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if(status === 'granted') {
+          let result = await Location.getCurrentPositionAsync({});
+     
+          if (result) {
+            this.setState({
+              location: result
+            });
+          }
+        }
+      }
 
+      takePhoto = async () => {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL)
+
+        if (status === 'granted') {
+            try {
+                let result = await ImagePicker.launchCameraAsync({
+                    mediaTypes: 'Images',
+                });
+            } catch (err) {
+                console.log(err);
+            }
+
+            if (!result.cancelled) {
+                try {
+                    const imageUrlLink = await this.uploadImage(result.uri);
+                    this.props.onSend({ image: imageUrlLink });
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        }
+    }
 
     renderBubble(props) {
         return (
@@ -152,9 +190,52 @@ export default class Chat extends React.Component {
         return(
           <InputToolbar
           {...props}
+        
           />
         );
       }
+    }
+
+    pickImage = async () => {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+   
+      if(status === 'granted') {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: 'Images',
+        }).catch(error => console.log(error));
+   
+        if (!result.cancelled) {
+          this.setState({
+            image: result
+          });  
+        }
+   
+      }
+    }
+
+    renderCustomActions = (props) => {
+      return <CustomActions {...props} />;
+    };
+
+    renderCustomView (props) {
+      const { currentMessage} = props;
+      if (currentMessage.location) {
+        return (
+            <MapView
+              style={{width: 150,
+                height: 100,
+                borderRadius: 13,
+                margin: 3}}
+              region={{
+                latitude: currentMessage.location.latitude,
+                longitude: currentMessage.location.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            />
+        );
+      }
+      return null;
     }
 
     componentDidMount() {
@@ -165,7 +246,7 @@ export default class Chat extends React.Component {
               await firebase.auth().signInAnonymously();
             }
               this.setState({
-                isConnected: false,
+                isConnected: true,
                 user: {
                   _id: user.uid,
                   name: this.props.route.params.name,
@@ -188,37 +269,10 @@ export default class Chat extends React.Component {
       });
     }
 
-     /* NetInfo.fetch().then(connection => {
-        if (connection.isConnected) {
-          console.log('online');
-        } else {
-          console.log('offline');
-        }
-      });
-        this.getMessages();
-        this.referenceMessages = firebase.firestore().collection('messages');
-        //this.unsubscribe = this.referenceShoppingLists.onSnapshot(this.onCollectionUpdate)
 
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-          if (!user) {
-            await firebase.auth().signInAnonymously();
-          }
-        
-          //update user state with currently active user data
-          this.setState({
-            uid: user.uid,
-            loggedInText: 'Hello there',
-            avatar: 'https://placeimg.com/140/140/any'
-          });
-
-          this.referenceMessagesUser = firebase.firestore().collection('messages').where("user.uid", "==", this.state.uid).orderBy('createdAt', 'desc')
-          this.unssubscribeChatUser = this.referenceMessagesUser.onSnapshot(this.onCollectionUpdate);
-        });
-      }
-      */
 
     componentWillUnmount(){
-     // this.unsubscribeListUser();
+
       this.authUnsubscribe();
       //this.unsubscribeChatUser();
     }
@@ -227,22 +281,18 @@ export default class Chat extends React.Component {
         let name = this.props.route.params.name;
         let color = this.props.route.params.color;
 
-        //this.props.navigation.setOptions({ title: name });
 
         
         return(
          
-        
-        /*<FlatList
-          data={this.state.messages}
-          renderItem={({ text}) =>
-        <Text>{item.name}: {item.items} </Text>} />
-        */
+     
 
            <View style={{flex: 1, backgroundColor: color}}>
             <GiftedChat
             renderBubble={this.renderBubble.bind(this)}
+            renderActions={this.renderCustomActions.bind(this)}
             renderInputToolbar={this.renderInputToolbar.bind(this)}
+            renderCustomView={this.renderCustomView}
             messages={this.state.messages}
             onSend={messages => this.onSend(messages)}
             image={this.state.image}
@@ -251,7 +301,19 @@ export default class Chat extends React.Component {
             uid: this.state.uid,
             }}
             />
+       
             
+            {this.state.location &&
+            <MapView
+            style={{width: '100%', height: 200}}
+            region={{
+            latitude: this.state.location.coords.latitude,
+            longitude: this.state.location.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+/>}
+
             </View>
           
         )
