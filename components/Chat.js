@@ -66,7 +66,7 @@ export default class Chat extends React.Component {
         // go through each document
         querySnapshot.forEach((doc) => {
           // get the QueryDocumentSnapshot's data
-          var data = doc.data();
+          let data = doc.data();
           messages.push({
             _id: data._id,
             createdAt: data.createdAt.toDate(),
@@ -132,41 +132,7 @@ export default class Chat extends React.Component {
         }
       }
 
-      getLocation = async () => {
-        const { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if(status === 'granted') {
-          let result = await Location.getCurrentPositionAsync({});
-     
-          if (result) {
-            this.setState({
-              location: result
-            });
-          }
-        }
-      }
 
-      takePhoto = async () => {
-        const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL)
-
-        if (status === 'granted') {
-            try {
-                let result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: 'Images',
-                });
-            } catch (err) {
-                console.log(err);
-            }
-
-            if (!result.cancelled) {
-                try {
-                    const imageUrlLink = await this.uploadImage(result.uri);
-                    this.props.onSend({ image: imageUrlLink });
-                } catch (err) {
-                    console.log(err);
-                }
-            }
-        }
-    }
 
     renderBubble(props) {
         return (
@@ -196,22 +162,6 @@ export default class Chat extends React.Component {
       }
     }
 
-    pickImage = async () => {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-   
-      if(status === 'granted') {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: 'Images',
-        }).catch(error => console.log(error));
-   
-        if (!result.cancelled) {
-          this.setState({
-            image: result
-          });  
-        }
-   
-      }
-    }
 
     renderCustomActions = (props) => {
       return <CustomActions {...props} />;
@@ -243,7 +193,11 @@ export default class Chat extends React.Component {
         if (state.isConnected) {
           this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
             if (!user) {
+              try{
               await firebase.auth().signInAnonymously();
+              } catch (error){
+                console.log(`Unable to sign in: ${error.message}`)
+              }
             }
               this.setState({
                 isConnected: true,
@@ -274,7 +228,7 @@ export default class Chat extends React.Component {
     componentWillUnmount(){
 
       this.authUnsubscribe();
-      //this.unsubscribeChatUser();
+      this.unsubscribeChatUser();
     }
 
     render(){
