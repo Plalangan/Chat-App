@@ -57,7 +57,7 @@ Download the Expo App on your mobile device. You will need to sign up for an acc
 9. Make sure to create a Firestore Database—not a “Realtime Database.”
 
 
-Kanban: 
+Kanban: https://trello.com/b/krKlmUR6/chat-app
     
     
 
