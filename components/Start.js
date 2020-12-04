@@ -2,6 +2,12 @@ import React from 'react';
 import { StyleSheet, View, Text, Button, ImageBackground, TouchableOpacity,KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
+/**
+ * @requires react
+ * @requires react-native
+ * @requires react-native-gesture-handler
+ */
+
 export default class Start extends React.Component {
 
     constructor(props){
@@ -13,33 +19,37 @@ export default class Start extends React.Component {
         
     }
 
-    render(){
-        return(
-            <ImageBackground source={require('../assets/BackgroundImage.png')} style={styles.background}>
-                 <Text style={styles.title}>Chat App</Text>
-                 
-            <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : 'padding'} style={styles.container}>
-                <TextInput
-                   style={styles.namebox}
-                   onChangeText={(name) => this.setState({name})}
-                   value={this.state.text}
-                   placeholder="Enter Your Name" textAlign='center'>
-                </TextInput>
-                <Text style={styles.text}>Choose Your Background Color:</Text>
-                <View style={styles.colorSelect}>
-                <TouchableOpacity style={[styles.color1, styles.colorButton]} onPress={() => this.setState({color: '#090C08'})}/>
-                <TouchableOpacity style={[styles.color2, styles.colorButton]} onPress={() => this.setState({color: '#474056'})}/>
-                <TouchableOpacity style={[styles.color3, styles.colorButton]} onPress={() => this.setState({color: '#8A95A5'})}/>
-                <TouchableOpacity style={[styles.color4, styles.colorButton]} onPress={() => this.setState({color: '#B9C6AE'})}/>
-                </View>
-                <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.props.navigation.navigate('Chat', {name: this.state.name, color: this.state.color})}>
-                <Text style={styles.startChat}>Start Chatting</Text>
-                </TouchableOpacity>
+render(){
+
+    /**
+     * Text input allows user to enter their name
+     * Colored buttons allow user to choose background chat color
+     */
+    return(
+        <ImageBackground source={require('../assets/BackgroundImage.png')} style={styles.background}>
+            <Text style={styles.title}>Chat App</Text>
+                <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : 'padding'} style={styles.container}>
+                    <TextInput
+                        style={styles.namebox}
+                        onChangeText={(name) => this.setState({name})}
+                        value={this.state.text}
+                        placeholder="Enter Your Name" textAlign='center'>
+                    </TextInput>
+                    <Text style={styles.text}>Choose Your Background Color:</Text>
+                    <View style={styles.colorSelect}>
+                    <TouchableOpacity style={[styles.color1, styles.colorButton]} onPress={() => this.setState({color: '#090C08'})}/>
+                    <TouchableOpacity style={[styles.color2, styles.colorButton]} onPress={() => this.setState({color: '#474056'})}/>
+                    <TouchableOpacity style={[styles.color3, styles.colorButton]} onPress={() => this.setState({color: '#8A95A5'})}/>
+                    <TouchableOpacity style={[styles.color4, styles.colorButton]} onPress={() => this.setState({color: '#B9C6AE'})}/>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => this.props.navigation.navigate('Chat', {name: this.state.name, color: this.state.color})}>
+                     <Text style={styles.startChat}>Start Chatting</Text>
+                    </TouchableOpacity>
              
-             </KeyboardAvoidingView>
-            </ImageBackground>
+                </KeyboardAvoidingView>
+        </ImageBackground>
         )
     }
 }
