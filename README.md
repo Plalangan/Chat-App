@@ -42,7 +42,22 @@ To start the app, run the following in your terminal:
 
 ## Installing Expo 
 
-Download the Expo App on your mobile device. You will need to sign up for an account. Once logged in, take a picture of the QR code in the browser window that was launched when you started the app.
+Download the Expo App on your mobile device. You will need to sign up for an account. Once logged in, take a picture of the QR code in the browser window that was launched when you started the app. This will then open up the app on your mobile device.
+
+## Setting up a firebase account
+
+1. Go to Google Firebase and click on “Sign in”
+2. Click on the “Go to console” link and click on "Create Project"
+3. A form will appear asking for basic information.
+4. Give a project name.
+5. With the default settings selected, agree to the terms and click “Create Project.”
+6. Create a database, click on “Develop” from the menu on the left-hand side.
+7. From the additional menu that appears, select “Database”.
+8. Choose “Create database” in the Cloud Firestore section.
+9. Make sure to create a Firestore Database—not a “Realtime Database.”
+
+
+Kanban: 
     
     
 
