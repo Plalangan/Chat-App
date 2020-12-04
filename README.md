@@ -36,4 +36,13 @@ Project Dependencies:
     react-native-web
     ws
     
+To start the app, run the following in your terminal:
+   
+### npm start
+
+## Installing Expo 
+
+Download the Expo App on your mobile device. You will need to sign up for an account. Once logged in, take a picture of the QR code in the browser window that was launched when you started the app.
+    
+    
 
